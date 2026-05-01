@@ -13,8 +13,11 @@ The device layer is abstracted so a real USB, DirectInput or vendor SDK device c
 I also added an API client for downloading game profiles and uploading telemetry batches, MSTest tests for parser/haptics/database logic, 
 and a C++ native DLL example called from C# using P/Invoke with a safe fallback.
 
+---
+
 ## Project structure
 
+```text
 TelemetryRigProject
 ├─ src
 │  ├─ TelemetryRig.Core
