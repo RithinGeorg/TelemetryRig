@@ -1,0 +1,92 @@
+<Window x:Class="TelemetryRig.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:behaviors="clr-namespace:TelemetryRig.Wpf.Behaviors"
+        Title="Telemetry Rig - WPF MVVM Real-Time Demo"
+        Height="760"
+        Width="1180"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="150"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Content="Start Telemetry" Width="130" Height="32" Margin="0,0,8,0" Command="{Binding StartCommand}"/>
+            <Button Content="Stop" Width="90" Height="32" Margin="0,0,8,0" Command="{Binding StopCommand}"/>
+            <Button Content="Load API Profile" Width="130" Height="32" Margin="0,0,8,0" Command="{Binding LoadApiProfileCommand}"/>
+            <Button Content="Upload Latest 20" Width="130" Height="32" Command="{Binding UploadLatestCommand}"/>
+        </StackPanel>
+
+        <UniformGrid Grid.Row="1" Columns="5" Margin="0,0,0,8">
+            <Border BorderBrush="LightGray" BorderThickness="1" Padding="8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Received" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding FramesReceived}" FontSize="18"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="LightGray" BorderThickness="1" Padding="8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Parsed" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding FramesParsed}" FontSize="18"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="LightGray" BorderThickness="1" Padding="8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Saved to SQLite" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding FramesSaved}" FontSize="18"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="LightGray" BorderThickness="1" Padding="8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Parser Errors" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding ParserErrors}" FontSize="18"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="LightGray" BorderThickness="1" Padding="8">
+                <StackPanel>
+                    <TextBlock Text="Avg Parse μs" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding AverageParseMicroseconds, StringFormat=F2}" FontSize="18"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!--
+            DataGrid performance settings:
+            EnableRowVirtualization=True means WPF does not create visual rows for all items.
+            It creates visuals only for the rows currently visible on screen.
+        -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Rows}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.VirtualizationMode="Recycling"
+                  ScrollViewer.CanContentScroll="True"
+                  behaviors:DataGridBubbleBehavior.RowDoubleClickCommand="{Binding RowDoubleClickCommand}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Frame" Binding="{Binding FrameId}" Width="70"/>
+                <DataGridTextColumn Header="Time" Binding="{Binding LocalTime}" Width="110"/>
+                <DataGridTextColumn Header="Speed" Binding="{Binding SpeedKph, StringFormat=F1}" Width="80"/>
+                <DataGridTextColumn Header="RPM" Binding="{Binding Rpm}" Width="80"/>
+                <DataGridTextColumn Header="Gear" Binding="{Binding Gear}" Width="60"/>
+                <DataGridTextColumn Header="Throttle" Binding="{Binding ThrottlePercent, StringFormat=F0}" Width="90"/>
+                <DataGridTextColumn Header="Brake" Binding="{Binding BrakePercent, StringFormat=F0}" Width="80"/>
+                <DataGridTextColumn Header="Steering" Binding="{Binding Steering, StringFormat=F2}" Width="90"/>
+                <DataGridTextColumn Header="Wheel Slip" Binding="{Binding WheelSlip, StringFormat=F2}" Width="90"/>
+                <DataGridTextColumn Header="Surface" Binding="{Binding Surface}" Width="100"/>
+                <DataGridTextColumn Header="Haptic Hint" Binding="{Binding HapticHint}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <GroupBox Grid.Row="3" Header="Diagnostics / Explanation Log" Margin="0,8,0,0">
+            <ListBox ItemsSource="{Binding Logs}"/>
+        </GroupBox>
+    </Grid>
+</Window>
